@@ -10,3 +10,13 @@
 /gradlew
 /gradlew.bat
 /Car Sharing/lesson-info.yaml
+*.class
+*.html
+*.css
+*.js
+*.bin
+/Car Sharing/task/build/test-results/test/TEST-CarSharingTest.xml
+/Car Sharing/task/build/test-results/test/binary/output.bin.idx
+/Car Sharing/task/build/tmp/test/jar_extract_16257858003097561625_tmp
+/Car Sharing/task/build/tmp/test/jar_extract_7027960175984869472_tmp
+*.db
