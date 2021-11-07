@@ -3,6 +3,8 @@ package carsharing;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 public class DbUtil {
     private static Connection connection = null;
@@ -33,5 +35,13 @@ public class DbUtil {
             }
             connection = null;
         }
+    }
+
+    public void addCompany(String companyTitle) {
+        System.out.println("Company added");
+    }
+
+    public List<String> getAllCompanies() {
+        return List.of("First company", "Second company");
     }
 }
