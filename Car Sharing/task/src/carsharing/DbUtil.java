@@ -11,11 +11,11 @@ public class DbUtil {
     private static String databaseFileName = "carsharing";//jdbc:h2:./src/carsharing/db/carsharing
     private static List<String> cars = new ArrayList<>();
 
-    public void setDatabaseFileName(String databaseFileName) {
+    public static void setDatabaseFileName(String databaseFileName) {
         DbUtil.databaseFileName = databaseFileName;
     }
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         if (connection != null) {
             return connection;
         }
@@ -28,7 +28,7 @@ public class DbUtil {
         return connection;
     }
 
-    public void closeConnection() {
+    public static void closeConnection() {
         if (connection != null) {
             try {
                 connection.close();
@@ -39,7 +39,7 @@ public class DbUtil {
         }
     }
 
-    public void addCompany(String companyTitle) {
+    public static void addCompany(String companyTitle) {
         try {
             getConnection().createStatement().execute("INSERT INTO COMPANY (name) " +
                     "VALUES ('" +
@@ -51,7 +51,7 @@ public class DbUtil {
         }
     }
 
-    public List<String> getAllCompanies() {
+    public static List<String> getAllCompanies() {
         ResultSet resultSet = null;
         List<String> companies = new ArrayList<>();
         try {
@@ -69,7 +69,7 @@ public class DbUtil {
         return companies;
     }
 
-    public void createTables() {
+    public static void createTables() {
         Connection connection = getConnection();
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(
@@ -90,7 +90,7 @@ public class DbUtil {
         closeConnection();
     }
 
-    public void addCar(String companyName, String carName) {
+    public static void addCar(String companyName, String carName) {
         try {
             int companyId = getCompanyIdByName(companyName);
             getConnection().createStatement().execute("INSERT INTO CAR (name, company_id) " +
@@ -105,7 +105,7 @@ public class DbUtil {
         }
     }
 
-    private int getCompanyIdByName(String companyName) {
+    private static int getCompanyIdByName(String companyName) {
         int companyId = 0;
         try {
             ResultSet resultSet = getConnection().createStatement().executeQuery("select id from COMPANY " +
@@ -122,7 +122,7 @@ public class DbUtil {
         return companyId;
     }
 
-    public List<String> getCompanyCars(String companyName) {
+    public static List<String> getCompanyCars(String companyName) {
         ResultSet resultSet = null;
         List<String> cars = new ArrayList<>();
         try {
