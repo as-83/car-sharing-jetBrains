@@ -1,11 +1,13 @@
 package carsharing.terminal;
 
-import carsharing.terminal.states.MainMenuState;
+
 import carsharing.terminal.states.State;
 
 public final class TerminalContext implements State {
     private static  TerminalContext terminalContext = new TerminalContext();
     private State terminalState;
+
+    private String currentCustomer;
 
     private TerminalContext() {
 
@@ -24,6 +26,15 @@ public final class TerminalContext implements State {
 
     public void setTerminalState(State terminalState) {
         this.terminalState = terminalState;
+    }
+
+
+    public String getCurrentCustomer() {
+        return currentCustomer;
+    }
+
+    public void setCurrentCustomer(String currentCustomer) {
+        this.currentCustomer = currentCustomer;
     }
 
 

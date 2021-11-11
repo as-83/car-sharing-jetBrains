@@ -9,12 +9,9 @@ import java.util.List;
 
 public class CompaniesListState implements State {
     private TerminalContext terminal = TerminalContext.getInstance();
-    private ManagerMenuState managerMenuState = ManagerMenuState.getInstance();
-    private CustomerMenuState customerMenuState = CustomerMenuState.getInstance();
     List<String> companies = new ArrayList<>();
 
     private static CompaniesListState companiesListState = new CompaniesListState();
-    private String currentCustomer;
 
     private CompaniesListState(){
 
@@ -50,10 +47,9 @@ public class CompaniesListState implements State {
             terminal.setTerminalState(ManagerMenuState.getInstance());
         } else {
             CompanyMenuState companyMenuState = new CompanyMenuState(companies.get(actionType - 1));
-            if (currentCustomer != null) {
+            if (terminal.getCurrentCustomer() != null) {
                 CarListState carListState = new CarListState();
                 carListState.currentCompany = companies.get(actionType - 1);
-                carListState.currentCustomer(currentCustomer);
                 terminal.setTerminalState(new CarListState());
             } else {
                 terminal.setTerminalState(companyMenuState);
@@ -64,7 +60,4 @@ public class CompaniesListState implements State {
 
     }
 
-    public void setCustomer(String currentCustomer) {
-        this.currentCustomer = currentCustomer;
-    }
 }

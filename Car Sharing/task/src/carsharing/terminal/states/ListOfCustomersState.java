@@ -6,22 +6,22 @@ import carsharing.terminal.TerminalContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerMenuState implements State {
+public class ListOfCustomersState implements State {
     private TerminalContext terminal = TerminalContext.getInstance();
 
     private List<String> customers = new ArrayList();
 
 
-    private static CustomerMenuState customerMenuState = new CustomerMenuState();
-    private CustomerMenuState(){
+    private static ListOfCustomersState listOfCustomersState = new ListOfCustomersState();
+    private ListOfCustomersState(){
 
     }
 
-    public static CustomerMenuState getInstance(){
-        if (customerMenuState == null) {
-            customerMenuState = new CustomerMenuState();
+    public static ListOfCustomersState getInstance(){
+        if (listOfCustomersState == null) {
+            listOfCustomersState = new ListOfCustomersState();
         }
-        return customerMenuState;
+        return listOfCustomersState;
     }
 
     @Override

@@ -9,8 +9,8 @@ import java.util.List;
 
 public class CarListState implements State {
     String currentCompany ;
-    private String currentCustomer;
     List<String> cars = new ArrayList<>();
+    private TerminalContext terminal = TerminalContext.getInstance();
 
     public CarListState(){
 
@@ -25,9 +25,13 @@ public class CarListState implements State {
         cars = DbUtil.getCompanyCars(currentCompany);
         if (cars.size() != 0) {
             int[] number = {1};
-            System.out.println("Car list:");
+            if (terminal.getCurrentCustomer() == null) {
+                System.out.println("Car list:");
+            } else {
+                System.out.println("Choose a car:");
+            }
             cars.forEach(c -> System.out.println(number[0]++ + ". " + c));
-            if (currentCustomer != null) {
+            if (terminal.getCurrentCustomer() != null) {
                 return true;
             }
 
@@ -35,7 +39,7 @@ public class CarListState implements State {
             System.out.println("The car list is empty!");
 
         }
-        TerminalContext.getInstance().setTerminalState(new CompanyMenuState(currentCompany));
+        terminal.setTerminalState(new CompanyMenuState(currentCompany));
         return false;
     }
 
@@ -44,14 +48,12 @@ public class CarListState implements State {
         if (actionType == 0) {
             TerminalContext.getInstance().setTerminalState(CompaniesListState.getInstance());
         } else {
-            if (DbUtil.getCar(currentCustomer, currentCompany, cars.get(actionType - 1))) {
-                System.out.println();
+            if (DbUtil.rentCar(terminal.getCurrentCustomer(), currentCompany, cars.get(actionType - 1))) {
+                System.out.println("You rented '" + cars.get(actionType -1) + "'" );
             }
+            terminal.setTerminalState(ListOfCustomersState.getInstance());
         }
 
     }
 
-    public void currentCustomer(String currentCustomer) {
-        this.currentCustomer = currentCustomer;
-    }
 }

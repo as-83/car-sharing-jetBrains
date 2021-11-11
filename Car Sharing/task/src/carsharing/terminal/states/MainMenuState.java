@@ -1,12 +1,15 @@
 package carsharing.terminal.states;
 
 
+import carsharing.DbUtil;
 import carsharing.terminal.TerminalContext;
+
+import java.util.Scanner;
 
 public class MainMenuState implements State {
     private TerminalContext terminal = TerminalContext.getInstance();
     private ManagerMenuState managerMenuState = ManagerMenuState.getInstance();
-    private CustomerMenuState customerMenuState = CustomerMenuState.getInstance();
+    private ListOfCustomersState listOfCustomersState = ListOfCustomersState.getInstance();
 
     private static MainMenuState mainMenuState = new MainMenuState();
     private MainMenuState(){
@@ -35,13 +38,25 @@ public class MainMenuState implements State {
     public void doAction(int actionType) {
 
         switch (actionType) {
-            case 1: terminal.setTerminalState(managerMenuState); break;
-            case 2: terminal.setTerminalState(customerMenuState); break;
-            case 3: terminal.setTerminalState(CreateCustomerMenuState.getInstance()); break;
+            case 1: {
+                terminal.setTerminalState(managerMenuState);
+                terminal.setCurrentCustomer(null);
+                break;
+            }
+            case 2: terminal.setTerminalState(listOfCustomersState); break;
+            case 3: createNewCustomer(); break;
             case 0: terminal.setTerminalState(new TerminationState()); break;
             default: break;
 
         }
 
+    }
+
+    private void createNewCustomer() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the customer name:");
+        String name = scanner.nextLine();
+
+        DbUtil.addCustomer(name);
     }
 }

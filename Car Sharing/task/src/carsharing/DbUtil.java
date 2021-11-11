@@ -2,7 +2,6 @@ package carsharing;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DbUtil {
@@ -52,21 +51,7 @@ public class DbUtil {
     }
 
     public static List<String> getAllCompanies() {
-        ResultSet resultSet = null;
-        List<String> companies = new ArrayList<>();
-        try {
-            resultSet = getConnection().createStatement().executeQuery("select * from COMPANY " +
-                    "ORDER BY ID");
-
-            while(resultSet.next()) {
-                companies.add(resultSet.getString(2));
-                //System.out.println(resultSet.getString(2));
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        closeConnection();
-        return companies;
+        return getAllEntitiesNames("COMPANY ");
     }
 
     public static void createTables() {
@@ -84,6 +69,14 @@ public class DbUtil {
                             "name VARCHAR NOT NULL UNIQUE," +
                             "company_id INT NOT NULL, " +
                             "foreign key (company_id) references COMPANY(ID))");
+
+            statement.executeUpdate(
+                    "CREATE TABLE " +
+                            "IF NOT EXISTS " +
+                            "CUSTOMERR (id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+                            "name VARCHAR NOT NULL UNIQUE," +
+                            "RENTED_CAR_ID INT, " +
+                            "foreign key (RENTED_CAR_ID) references CAR(ID))");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -143,5 +136,101 @@ public class DbUtil {
         }
         closeConnection();
         return cars;
+    }
+
+    public static boolean rentCar(String currentCustomer, String companyName, String carName) {
+        int rentedCarId = getCarId(carName, companyName);
+
+        try {
+            getConnection().createStatement().execute("UPDATE CUSTOMER " +
+                    "SET RENTED_CAR_ID = " +
+                    rentedCarId +
+                    " WHERE  NAME = '" +
+                    currentCustomer +
+                    "';");
+            closeConnection();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return true;
+
+    }
+
+    private static int getCarId(String carName, String companyName) {
+        int carId = 0;
+        try {
+            ResultSet resultSet = getConnection().createStatement().executeQuery("select c.id from Car c" +
+                    " inner join company cm " +
+                    "on CM.ID = C.COMPANY_ID" +
+                    "where cm.name = '" +
+                    companyName +
+                    "' " +
+                    "and c.name = '" +
+                    carName +
+                    "';");
+            if (resultSet.next()) {
+                carId = resultSet.getInt(1);
+            }
+            closeConnection();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return carId;
+    }
+
+    public static List<String> getAllCustomers() {
+        return getAllEntitiesNames("car ");
+    }
+
+    public static List<String> getAllEntitiesNames(String tableName) {
+        String query = "select * from " + tableName + "ORDER BY ID";
+        ResultSet resultSet = null;
+        List<String> companies = new ArrayList<>();
+        try {
+            resultSet = getConnection().createStatement().executeQuery(query);
+
+            while(resultSet.next()) {
+                companies.add(resultSet.getString(2));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        closeConnection();
+        return companies;
+    }
+
+    public static void addCustomer(String name) {
+        try {
+            getConnection().createStatement().execute("INSERT INTO CUSTOMER (name) " +
+                    "VALUES ('" +
+                    name +
+                    "');");
+            closeConnection();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public static String[] getRentedCar(String currentCustomer) {
+        int carId = 0;
+        try {
+            ResultSet resultSet = getConnection().createStatement().executeQuery("select c.id from Car c" +
+                    " inner join company cm " +
+                    "on CM.ID = C.COMPANY_ID" +
+                    "where cm.name = '" +
+                    companyName +
+                    "' " +
+                    "and c.name = '" +
+                    carName +
+                    "';");
+            if (resultSet.next()) {
+                carId = resultSet.getInt(1);
+            }
+            closeConnection();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return carId;
     }
 }
