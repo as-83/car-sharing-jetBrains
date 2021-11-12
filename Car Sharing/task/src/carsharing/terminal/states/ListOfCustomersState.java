@@ -47,6 +47,7 @@ public class ListOfCustomersState implements State {
             TerminalContext.getInstance().setTerminalState(MainMenuState.getInstance());
         } else {
             TerminalContext.getInstance().setTerminalState(new CustomerState(customers.get(actionType - 1)));
+            TerminalContext.getInstance().setCurrentCustomer(customers.get(actionType - 1));
         }
     }
 }

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CarListState implements State {
-    String currentCompany ;
-    List<String> cars = new ArrayList<>();
+    static String currentCompany ;
+    private static List<String> cars = new ArrayList<>();
     private TerminalContext terminal = TerminalContext.getInstance();
 
     public CarListState(){

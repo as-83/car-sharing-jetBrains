@@ -44,7 +44,11 @@ public class CompaniesListState implements State {
     public void doAction(int actionType) {
 
         if (actionType == 0) {
-            terminal.setTerminalState(ManagerMenuState.getInstance());
+            if (terminal.getCurrentCustomer() == null) {
+                terminal.setTerminalState(ManagerMenuState.getInstance());
+            } else {
+                terminal.setTerminalState(new CustomerState(terminal.getCurrentCustomer()));
+            }
         } else {
             CompanyMenuState companyMenuState = new CompanyMenuState(companies.get(actionType - 1));
             if (terminal.getCurrentCustomer() != null) {

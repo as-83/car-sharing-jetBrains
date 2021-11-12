@@ -61,22 +61,22 @@ public class DbUtil {
                     "CREATE TABLE " +
                             "IF NOT EXISTS " +
                             "COMPANY(id INTEGER PRIMARY KEY AUTO_INCREMENT," +
-                            "name VARCHAR NOT NULL UNIQUE )");
+                            "name VARCHAR NOT NULL UNIQUE );");
             statement.executeUpdate(
                     "CREATE TABLE " +
                             "IF NOT EXISTS " +
                             "CAR (id INTEGER PRIMARY KEY AUTO_INCREMENT," +
                             "name VARCHAR NOT NULL UNIQUE," +
                             "company_id INT NOT NULL, " +
-                            "foreign key (company_id) references COMPANY(ID))");
+                            "foreign key (company_id) references COMPANY(ID));");
 
             statement.executeUpdate(
                     "CREATE TABLE " +
                             "IF NOT EXISTS " +
-                            "CUSTOMERR (id INTEGER PRIMARY KEY AUTO_INCREMENT," +
-                            "name VARCHAR NOT NULL UNIQUE," +
-                            "RENTED_CAR_ID INT, " +
-                            "foreign key (RENTED_CAR_ID) references CAR(ID))");
+                            "CUSTOMER (id INTEGER PRIMARY KEY AUTO_INCREMENT, " +
+                            "name VARCHAR NOT NULL UNIQUE, " +
+                            "RENTED_CAR_ID INT DEFAULT NULL, " +
+                            "foreign key (RENTED_CAR_ID) references CAR(ID));");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -163,7 +163,7 @@ public class DbUtil {
             ResultSet resultSet = getConnection().createStatement().executeQuery("select c.id from Car c" +
                     " inner join company cm " +
                     "on CM.ID = C.COMPANY_ID" +
-                    "where cm.name = '" +
+                    " where cm.name = '" +
                     companyName +
                     "' " +
                     "and c.name = '" +
@@ -180,7 +180,7 @@ public class DbUtil {
     }
 
     public static List<String> getAllCustomers() {
-        return getAllEntitiesNames("car ");
+        return getAllEntitiesNames("customer ");
     }
 
     public static List<String> getAllEntitiesNames(String tableName) {
@@ -213,24 +213,45 @@ public class DbUtil {
     }
 
     public static String[] getRentedCar(String currentCustomer) {
-        int carId = 0;
+        String[] companyAndCar = {"", ""};
         try {
-            ResultSet resultSet = getConnection().createStatement().executeQuery("select c.id from Car c" +
+            ResultSet resultSet = getConnection().createStatement().executeQuery("select cm.name, c.name from Car c" +
                     " inner join company cm " +
                     "on CM.ID = C.COMPANY_ID" +
-                    "where cm.name = '" +
-                    companyName +
-                    "' " +
-                    "and c.name = '" +
-                    carName +
+                    " inner join customer cu " +
+                    "on cu.rented_car_id = C.ID " +
+                    "where cu.name = '" +
+                    currentCustomer +
                     "';");
             if (resultSet.next()) {
-                carId = resultSet.getInt(1);
+                companyAndCar[0] = resultSet.getString(1);
+                companyAndCar[1] = resultSet.getString(2);
             }
             closeConnection();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return carId;
+        return companyAndCar;
+    }
+
+    public static boolean returnCar(String currentCustomer) {
+        try {
+            /*ResultSet resultSet = getConnection().createStatement().executeQuery("SELECT RENRTED_CAR_ID FROM CUSTOMERS " +
+                    " WHERE  NAME = '" +
+                    currentCustomer +
+                    "';");*/
+            //closeConnection();
+            boolean returned = getConnection().createStatement().execute("UPDATE CUSTOMER " +
+                    "SET RENTED_CAR_ID = NULL" +
+                    " WHERE NAME = '" +
+                    currentCustomer +
+                    "' " +
+                    "AND RENTED_CAR_ID IS NOT NULL;");
+            closeConnection();
+            return returned;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
     }
 }
