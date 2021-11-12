@@ -213,24 +213,45 @@ public class DbUtil {
     }
 
     public static String[] getRentedCar(String currentCustomer) {
-        int carId = 0;
+        String[] companyAndCar = new String[2];
         try {
-            ResultSet resultSet = getConnection().createStatement().executeQuery("select c.id from Car c" +
+            ResultSet resultSet = getConnection().createStatement().executeQuery("select cm.name, c.name from Car c" +
                     " inner join company cm " +
                     "on CM.ID = C.COMPANY_ID" +
-                    "where cm.name = '" +
-                    companyName +
-                    "' " +
-                    "and c.name = '" +
-                    carName +
+                    " inner join customer cu " +
+                    "on cu.rented_car_id = C.ID " +
+                    "where cu.name = '" +
+                    currentCustomer +
                     "';");
             if (resultSet.next()) {
-                carId = resultSet.getInt(1);
+                companyAndCar[0] = resultSet.getString(1);
+                companyAndCar[2] = resultSet.getString(2);
             }
             closeConnection();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return carId;
+        return companyAndCar;
+    }
+
+    public static boolean returnCar(String currentCustomer) {
+        try {
+            /*ResultSet resultSet = getConnection().createStatement().executeQuery("SELECT RENRTED_CAR_ID FROM CUSTOMERS " +
+                    " WHERE  NAME = '" +
+                    currentCustomer +
+                    "';");*/
+            closeConnection();
+            boolean returned = getConnection().createStatement().execute("UPDATE CUSTOMER " +
+                    "SET RENTED_CAR_ID = NULL" +
+                    " WHERE  NAME = '" +
+                    currentCustomer +
+                    "' " +
+                    "AND RENTED_CAR_ID = 'NULL';");
+            closeConnection();
+            return returned;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
     }
 }

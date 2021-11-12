@@ -42,14 +42,13 @@ public class CustomerState implements State {
 
 
     private void getRentedCar() {
-        String[] rentedCar = DbUtil.getRentedCar(currentCustomer);
-        String rentedCarCompany = DbUtil.getRentedCarCompany(currentCustomer);
-        if (rentedCar != null) {
+        String[] rentedCarAndCompany = DbUtil.getRentedCar(TerminalContext.getInstance().getCurrentCustomer());
+        if (!rentedCarAndCompany[0].isEmpty()) {
             System.out.println(
                     "Your rented car:\n" +
-                    rentedCar +
+                    rentedCarAndCompany[1] +
                     "\nCompany:\n" +
-                    rentedCarCompany);
+                    rentedCarAndCompany[0]);
         } else {
             System.out.println("You didn't rent a car!");
         }
