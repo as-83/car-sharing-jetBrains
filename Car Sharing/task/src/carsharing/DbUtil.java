@@ -124,7 +124,7 @@ public class DbUtil {
                     "ON CM.ID = C.COMPANY_ID " +
                     "WHERE CM.NAME = '" +
                     companyName +
-                    "' " +
+                    "' AND C.ID  NOT IN (SELECT RENTED_CAR_ID FROM CUSTOMER WHERE RENTED_CAR_ID IS NOT NULL) " +
                     "ORDER BY C.ID");
 
             while(resultSet.next()) {
@@ -140,20 +140,21 @@ public class DbUtil {
 
     public static boolean rentCar(String currentCustomer, String companyName, String carName) {
         int rentedCarId = getCarId(carName, companyName);
+        int updatedCount = 0;
 
         try {
-            getConnection().createStatement().execute("UPDATE CUSTOMER " +
+            updatedCount = getConnection().createStatement().executeUpdate("UPDATE CUSTOMER " +
                     "SET RENTED_CAR_ID = " +
                     rentedCarId +
                     " WHERE  NAME = '" +
                     currentCustomer +
-                    "';");
+                    "' AND RENTED_CAR_ID IS NULL;");
             closeConnection();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
-        return true;
+        return updatedCount > 0;
 
     }
 
@@ -235,23 +236,23 @@ public class DbUtil {
     }
 
     public static boolean returnCar(String currentCustomer) {
+        int updatedCount = 0;
         try {
             /*ResultSet resultSet = getConnection().createStatement().executeQuery("SELECT RENRTED_CAR_ID FROM CUSTOMERS " +
                     " WHERE  NAME = '" +
                     currentCustomer +
                     "';");*/
             //closeConnection();
-            boolean returned = getConnection().createStatement().execute("UPDATE CUSTOMER " +
+            updatedCount = getConnection().createStatement().executeUpdate("UPDATE CUSTOMER " +
                     "SET RENTED_CAR_ID = NULL" +
                     " WHERE NAME = '" +
                     currentCustomer +
                     "' " +
                     "AND RENTED_CAR_ID IS NOT NULL;");
             closeConnection();
-            return returned;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return false;
+        return updatedCount > 0;
     }
 }

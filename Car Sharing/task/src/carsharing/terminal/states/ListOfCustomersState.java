@@ -31,7 +31,7 @@ public class ListOfCustomersState implements State {
             int[] number = {1};
             System.out.println("Customer list:");
             customers.forEach(c -> System.out.println(number[0]++ + ". " + c));
-            System.out.println("0. Exit");
+            System.out.println("0. Back");
             return true;
         } else {
             System.out.println("The customer list is empty!");

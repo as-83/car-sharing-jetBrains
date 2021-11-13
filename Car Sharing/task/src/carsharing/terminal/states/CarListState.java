@@ -50,8 +50,10 @@ public class CarListState implements State {
         } else {
             if (DbUtil.rentCar(terminal.getCurrentCustomer(), currentCompany, cars.get(actionType - 1))) {
                 System.out.println("You rented '" + cars.get(actionType -1) + "'" );
+            } else {
+                System.out.println("You've already rented a car!");
             }
-            terminal.setTerminalState(ListOfCustomersState.getInstance());
+            terminal.setTerminalState(new CustomerState(TerminalContext.getInstance().getCurrentCustomer()));
         }
 
     }

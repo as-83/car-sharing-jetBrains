@@ -23,7 +23,7 @@ public class CustomerState implements State {
     @Override
     public void doAction(int actionType) {
         switch (actionType) {
-            case 1: TerminalContext.getInstance().setTerminalState(CompaniesListState.getInstance()); break;
+            case 1: tryToRentCar(); break;
             case 2: tryToReturnCar(); break;
             case 3: getRentedCar(); break;
             case 0: TerminalContext.getInstance().setTerminalState(MainMenuState.getInstance()); break;
@@ -31,6 +31,16 @@ public class CustomerState implements State {
 
         }
     }
+
+    private void tryToRentCar() {
+        if (getRentedCar()) {
+            System.out.println("You've already rented a car!");
+        } else {
+            TerminalContext.getInstance().setTerminalState(CompaniesListState.getInstance());
+        }
+
+    }
+
 
     private void tryToReturnCar() {
         if (DbUtil.returnCar(TerminalContext.getInstance().getCurrentCustomer())) {
@@ -41,7 +51,7 @@ public class CustomerState implements State {
     }
 
 
-    private void getRentedCar() {
+    private boolean getRentedCar() {
         String[] rentedCarAndCompany = DbUtil.getRentedCar(TerminalContext.getInstance().getCurrentCustomer());
         if (!rentedCarAndCompany[0].isEmpty()) {
             System.out.println(
@@ -49,8 +59,10 @@ public class CustomerState implements State {
                     rentedCarAndCompany[1] +
                     "\nCompany:\n" +
                     rentedCarAndCompany[0]);
+            return true;
         } else {
             System.out.println("You didn't rent a car!");
+            return false;
         }
     }
 }
